@@ -1,0 +1,43 @@
+[
+  {
+    "name": "net_1",
+    "description": "Network 1",
+    "subnet": "192.0.0.0/27",
+    "email": "sysadmin@domain.com",
+    "notifications": ["unknown-device", "wrong-hostname", "vulnerability"],
+    "monitoring": "all",
+    "hosts": [
+      {
+        "hostname": "router.domain.com",
+        "ip": "192.0.0.33",
+        "exclude": ["vulnerability", "mac", "hostname"]
+      },
+      {
+        "hostname": "mail.domain.com",
+        "ip": "192.0.0.35",
+        "mac": "90:31:4D:3D:AE:BF",
+        "email": "it@domain.com"
+      }
+    ]
+  },
+  {
+    "name": "net_2",
+    "description": "Network 2",
+    "subnet": "192.168.0.0/27",
+    "email": "sysadmin@domain.com",
+    "monitoring": "list-only",
+    "exclude": "mac",
+    "hosts": [
+      {
+        "hostname": "office-computer.domain.com",
+        "ip": "192.168.0.2",
+        "email": "it@domain.com"
+      },
+      {
+        "hostname": "office-printer.domain.com",
+        "ip": "192.168.0.10",
+        "email": "infrastructure@domain.com"
+      }
+    ]
+  }
+]
