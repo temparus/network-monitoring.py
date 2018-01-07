@@ -39,7 +39,29 @@ The default configuration file is `./config.json`. It needs to have the followin
 * `exclude`: must be an array containing at most `vulnerability` (skip vulnerability scan for this host) and `mac` (do not check if MAC address matches).
 
 ## Usage
-< to be added soon >
+```
+usage: network-monitoring.py [-h] [--email] [--verbose] [--config config.json]
+                             [--version]
+                             {network-scan,vulnerability-scan} param
+
+Monitors whole subnets (IP-Address ranges) for hardware changes (MAC address)
+and vulnerabilities.
+
+positional arguments:
+  {network-scan,vulnerability-scan}
+                        action to be performed
+  param                 parameter for the choosen action
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --email, -e           send email notifications instead of printing to the
+                        console
+  --verbose, -v         prints more output to the console
+  --config config.json, -c config.json
+                        path to the configuration file
+  --version             show program's version number and exit
+
+```
 
 ## License
 Copyright (C) 2018 Sandro Lutz \<<code@temparus.ch>\>
