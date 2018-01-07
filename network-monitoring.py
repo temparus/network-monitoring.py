@@ -50,7 +50,7 @@ if type(args.param) is list: args.param = args.param[0]
 if args.action == 'network-scan':
   if args.param == 'all':
     if args.verbose:
-      print('Scanning all known networks\n')
+      print('Scanning all known networks (' + str(len(data)) + ' networks)\n')
     result = network_scan(data)
   else:
     try:
@@ -73,7 +73,7 @@ elif args.action == 'vulnerability-scan':
     for network in data:
       hosts += network.get('hosts', [])
     if args.verbose: 
-      print('Scanning all known hosts (' + len(hosts) + ' hosts)\n\n')
+      print('Scanning all known hosts (' + str(len(hosts)) + ' hosts)\n\n')
     result = host_scan(hosts)
   else:
     try:
