@@ -19,7 +19,7 @@ def host_scan(hosts):
 
     counter = 0
     output = None
-    while (counter < 3 && output is None):
+    while (counter < 3 and output is None):
       try:
         output = subprocess.check_output('nmap --script vuln ' + host.get('hostname', host.get('ip', '')), shell=True)
       except:

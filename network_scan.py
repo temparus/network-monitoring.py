@@ -26,7 +26,7 @@ def network_scan(networks):
 
     counter = 0
     output = None
-    while (counter < 3 && output is None):
+    while (counter < 3 and output is None):
       try:
         output = subprocess.check_output(['nmap', '-sP', network['subnet']])
       except:
