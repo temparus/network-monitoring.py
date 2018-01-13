@@ -5,6 +5,7 @@
 # This software is licensed under GPLv3, see LICENSE for details. 
 
 import re
+import socket
 import subprocess
 
 def host_scan(hosts):
@@ -16,7 +17,14 @@ def host_scan(hosts):
     if 'vulnerability' in host.get('exclude', []):
       continue
 
-    output = subprocess.check_output('nmap --script vuln ' + host.get('hostname', host.get('ip', '')), shell=True)
+    counter = 0
+    output = None
+    while (counter < 3 && output is None):
+      try:
+        output = subprocess.check_output('nmap --script vuln ' + host.get('hostname', host.get('ip', '')), shell=True)
+      except:
+        counter += 1
+        output = None
 
     message = '--------------------------------------------\n' \
               '# Host: ' + host.get('hostname', 'not specified') + \
@@ -25,7 +33,9 @@ def host_scan(hosts):
               '# Administrator: ' + host.get('email', 'not specified') + '\n' \
               '--------------------------------------------\n\n' \
 
-    if re.search('(?<!NOT )VULNERABLE', output) is not None:
+    if output is None:
+      message += 'Failed to scan for vulnerabilities! Please check the configuration of ' + socket.getfqdn() + '\n\n'
+    elif re.search('(?<!NOT )VULNERABLE', output) is not None:
       message += output + '\n\n'
       if 'email' in host:
         if host.get('email', 'fake') not in messages or type(host.get('email', 'fake')) is not list:

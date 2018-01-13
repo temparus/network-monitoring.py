@@ -6,6 +6,7 @@
 
 import os
 import sys
+import socket
 import subprocess
 from utils import *
 
@@ -23,48 +24,57 @@ def network_scan(networks):
     # config conflict will always generate a notification
     network['notifications'].append('config-conflict')
 
-    output = subprocess.check_output(['nmap', '-sP', network['subnet']])
-    outputNmap = output.split('\n')
+    counter = 0
+    output = None
+    while (counter < 3 && output is None):
+      try:
+        output = subprocess.check_output(['nmap', '-sP', network['subnet']])
+      except:
+        counter += 1
+        output = None
 
-    current_host_valid = False
-    current_hostname = ''
-    current_ip = ''
+    if (output is not None):
+      outputNmap = output.split('\n')
 
-    for line in outputNmap:
-        if line.startswith('Nmap scan report for '):
-            tmpStrings = line[21:].split(' ')
-            if len(tmpStrings) == 2:
-              current_hostname = tmpStrings[0]
-              current_ip = tmpStrings[1][1:-1]
-              current_host_valid = True
-            else:
-              current_host_valid = False
-        elif current_host_valid and line.startswith('MAC Address: '):
-            mac = line[13:30]
-            hostConfig = None
-            hostProblems = list()
+      current_host_valid = False
+      current_hostname = ''
+      current_ip = ''
 
-            for host in network['hosts']:
-              if current_ip == host['ip']:
-                if hostConfig is not None:
-                  hostProblems.append({'problem': 'config-conflict', 'host': host})
-                else:
-                  hostConfig = host
-                  if ('wrong-hostname' in network['notifications'] and
-                    'hostname' not in host.get('exclude', []) and
-                    current_hostname != host.get('hostname', current_hostname)):
-                    hostProblems.append({'problem': 'wrong-hostname', 'hostname': current_hostname})
-                  if ('unknown-device' in network['notifications'] and
-                    'mac' not in host.get('exclude', []) and
-                    mac != host.get('mac', mac)):
-                    hostProblems.append({'problem': 'unknown-device', 'mac': mac})
+      for line in outputNmap:
+          if line.startswith('Nmap scan report for '):
+              tmpStrings = line[21:].split(' ')
+              if len(tmpStrings) == 2:
+                current_hostname = tmpStrings[0]
+                current_ip = tmpStrings[1][1:-1]
+                current_host_valid = True
+              else:
+                current_host_valid = False
+          elif current_host_valid and line.startswith('MAC Address: '):
+              mac = line[13:30]
+              hostConfig = None
+              hostProblems = list()
 
-            if hostConfig is None:
-              if network.get('monitoring', 'all') == 'all':
-                problemsUnknownHosts.append({'hostname': current_hostname, 'ip': current_ip, 'mac': mac})
-            elif len(hostProblems) > 0:
-              hostConfig['problems'] = hostProblems
-              problemsKnownHosts.append(hostConfig)
+              for host in network['hosts']:
+                if current_ip == host['ip']:
+                  if hostConfig is not None:
+                    hostProblems.append({'problem': 'config-conflict', 'host': host})
+                  else:
+                    hostConfig = host
+                    if ('wrong-hostname' in network['notifications'] and
+                      'hostname' not in host.get('exclude', []) and
+                      current_hostname != host.get('hostname', current_hostname)):
+                      hostProblems.append({'problem': 'wrong-hostname', 'hostname': current_hostname})
+                    if ('unknown-device' in network['notifications'] and
+                      'mac' not in host.get('exclude', []) and
+                      mac != host.get('mac', mac)):
+                      hostProblems.append({'problem': 'unknown-device', 'mac': mac})
+
+              if hostConfig is None:
+                if network.get('monitoring', 'all') == 'all':
+                  problemsUnknownHosts.append({'hostname': current_hostname, 'ip': current_ip, 'mac': mac})
+              elif len(hostProblems) > 0:
+                hostConfig['problems'] = hostProblems
+                problemsKnownHosts.append(hostConfig)
 
     message = '--------------------------------------------\n' \
                '# Network name: ' + network.get('description', 'not specified') + \
@@ -100,9 +110,11 @@ def network_scan(networks):
           unknownHost.get('mac', 'none') + '\n'
       message += '\n\n'
 
-    if len(problemsUnknownHosts) == 0 and len(problemsKnownHosts) == 0:
+    if output is not None and len(problemsUnknownHosts) == 0 and len(problemsKnownHosts) == 0:
       message += 'There are no detected problems with this network.\n\n'
     elif 'email' in network and len(network['email']) > 0:
+      if output is not None:
+        message += 'Could not perform network scan! Please check the configuration of ' + socket.getfqdn() + '\n\n'
       if network.get('email', 'none') not in messages:
         messages[network.get('email', 'none')] = {'subject': '', 'message': ''}
       if len(messages[network.get('email', 'none')]['subject']) == 0:
