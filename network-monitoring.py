@@ -110,8 +110,8 @@ if result is not None:
                      email.get('message', '') + \
                     '############## End of report ###############\n'
           sendEmail(key, email.get('subject', 'Alert: Network Monitoring') + ' [network-monitoring.py]', message)
-      if args.verbose:
-        print(str(len(value)) + ' emails sent to ' + key + '\n')
+        if args.verbose:
+          print(str(len(value)) + ' emails sent to ' + key + '\n')
   else:
     print('########## network-monitoring.py ###########\n')
     if type(result.get('none', '')) is list:

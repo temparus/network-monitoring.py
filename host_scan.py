@@ -38,7 +38,7 @@ def host_scan(hosts):
     elif re.search('(?<!NOT )VULNERABLE', output) is not None:
       message += output + '\n\n'
       if 'email' in host:
-        if host.get('email', 'fake') not in messages or type(host.get('email', 'fake')) is not list:
+        if host.get('email', 'fake') not in messages or type(messages.get(host.get('email', 'fake'))) is not list:
           messages[host.get('email', 'fake')] = []
         email = {'subject': 'Alert: Vulnerability scan for ' + 
                              host.get('hostname', host.get('ip', 'unknown')),
