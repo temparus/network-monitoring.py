@@ -10,6 +10,8 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
 ## Setup
 Just copy the source files to a directory on your machine.
 
+> Please make sure to whitelist your monitoring server on your monitored devices if you are using `fail2ban`.
+
 ## Configuration File
 
 The default configuration file is `./config.json`. It needs to have the following structure:
