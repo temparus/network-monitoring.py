@@ -10,4 +10,4 @@ WORKDIR /network-monitoring.py
 
 RUN chmod 755 network-monitoring.py
 
-ENTRYPOINT ["/bin/sh"]
+ENTRYPOINT ["./network-monitoring.py"]
