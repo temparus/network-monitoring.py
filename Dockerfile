@@ -8,4 +8,4 @@ ADD . /network-monitor.py/
 
 WORKDIR /network-monitor.py
 
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/sh"]
