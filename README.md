@@ -5,10 +5,36 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
 
 ## Requirements
 * nmap version 7.00 or higher
-* cron (optional, needed only for regular checks)
+* sendmail *(optional, needed only for email notifications)*
+* cron *(optional, needed only for regular checks)*
 
 ## Setup
-Just copy the source files to a directory on your machine.
+1. Get source files
+    * Use the docker image (https://hub.docker.com/r/temparus/network-monitoring-py/)
+        * **Docker** <br>
+          ```
+          docker run --volume /path/to/config.json:/network-monitor.py/config.json -ti \
+          temparus/network-monitoring-py:latest
+          ```
+        * **Docker-Compose** <br>
+          ```
+          network-monitoring-py:
+            image: temparus/network-monitoring-py:latest
+            volumes:
+              - /path/to/config.json:/network-monitor.py/config.json
+          ```
+    * Just copy the source files to a directory on your machine.
+2. Cron configuration (Adapt the following lines to your requirements)
+    * **Non-Docker** execute `crontab -e` and add the following line there<br>
+      ```
+      0    3 * * * /path/to/network-monitoring.py/network-monitoring.py vulnerability-scan all --email
+      */10 * * * * /path/to/network-monitoring.py/network-monitoring.py network-scan all --email
+      ```
+    * **Docker** execute `crontab -e` on the host and add the following line there <br>
+      ```
+      0    3 * * * docker run --rm <your-container> /network-monitoring.py/network-monitoring.py vulnerability-scan all --email
+      */10 * * * * docker run --rm <your-container> /network-monitoring.py/network-monitoring.py network-scan all --email
+      ```
 
 > Please make sure to whitelist your monitoring server on your monitored devices if you are using `fail2ban`.
 
