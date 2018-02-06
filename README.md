@@ -24,7 +24,7 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
         image: temparus/network-monitoring-py:latest
         volumes:
           - /path/to/config.json:/network-monitor.py/config.json
-      ``` <br>
+      ```
       ```
       docker-compose run network-monitoring-py -i
       ```
@@ -39,8 +39,8 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
       ```
     * **Docker-Compose** (preferred) execute `crontab -e` on the host and add the following line there <br>
       ```
-      0    3 * * * docker run network-monitoring-py ./network-monitoring.py vulnerability-scan all --email
-      */10 * * * * docker run network-monitoring-py ./network-monitoring.py network-scan all --email
+      0    3 * * * docker-compose run network-monitoring-py ./network-monitoring.py vulnerability-scan all --email
+      */10 * * * * docker-compose run network-monitoring-py ./network-monitoring.py network-scan all --email
       ```
     * **Standalone** execute `crontab -e` and add the following line there<br>
       ```
@@ -104,7 +104,7 @@ optional arguments:
 ```
 
 ## License
-Copyright (C) 2018 Sandro Lutz \<<code@temparus.ch>\>
+Copyright (C) 2018 Sandro Lutz \<code@temparus.ch\>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
