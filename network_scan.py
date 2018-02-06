@@ -34,7 +34,7 @@ def network_scan(networks):
         output = None
 
     if (output is not None):
-      outputNmap = output.split('\n')
+      outputNmap = output.decode().split('\n')
 
       current_host_valid = False
       current_hostname = ''
