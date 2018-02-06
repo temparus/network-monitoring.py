@@ -8,4 +8,6 @@ ADD . /network-monitoring.py/
 
 WORKDIR /network-monitoring.py
 
+RUN chmod 755 network-monitoring.py
+
 ENTRYPOINT ["/bin/sh"]
