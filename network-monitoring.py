@@ -79,13 +79,13 @@ elif args.action == 'vulnerability-scan':
         hosts += network.get('hosts', [])
     if args.verbose: 
       print('Scanning all known hosts (' + str(len(hosts)) + ' hosts)\n\n')
-    result = host_scan(hosts)
+    result = host_scan(hosts, args.verbose)
   else:
     try:
       ip = ipaddress.ip_address(args.param)
       if args.verbose: 
         print('Scanning host ' + str(ip) + '\n')
-      result = host_scan({'ip': str(ip)})
+      result = host_scan({'ip': str(ip)}, args.verbose)
     except ValueError:
       # Not a valid ip address -> maybe a host name?
       for network in data:
@@ -93,7 +93,7 @@ elif args.action == 'vulnerability-scan':
           if host.get('hostname', '') == args.param:
             if args.verbose: 
               print('Scanning known host ' + args.param + '\n')
-            result = host_scan(host)
+            result = host_scan(host, args.verbose)
             break;
         if result is not None:
           break;
@@ -102,7 +102,7 @@ elif args.action == 'vulnerability-scan':
         # Just try to scan as it may be a hostname
         if args.verbose: 
           print('Scanning unknown host ' + args.param + '\n')
-        result = host_scan({'hostname': args.param})
+        result = host_scan({'hostname': args.param}, args.verbose)
 
 if result is not None:
   if args.email:
