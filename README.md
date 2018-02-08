@@ -15,13 +15,14 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
 2. Run network-monitoring.py once with Docker <br>
     * **Docker** <br>
       ```
-      docker run --volume /path/to/config.json:/network-monitor.py/config.json -ti \
+      docker run --net=host --volume /path/to/config.json:/network-monitor.py/config.json -ti \
       temparus/network-monitoring-py:latest
       ```
     * **Docker-Compose** <br>
       ```
       network-monitoring-py:
         image: temparus/network-monitoring-py:latest
+	net: host
         volumes:
           - /path/to/config.json:/network-monitor.py/config.json
       ```
@@ -34,8 +35,8 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
 3. Cron configuration (Adapt the following lines to your requirements)
     * **Docker** execute `crontab -e` on the host and add the following line there <br>
       ```
-      0    3 * * * docker run --volume /path/to/config.json:/network-monitor.py/config.json ./network-monitoring.py vulnerability-scan all --email
-      */10 * * * * docker run --volume /path/to/config.json:/network-monitor.py/config.json./network-monitoring.py network-scan all --email
+      0    3 * * * docker run --net=host --volume /path/to/config.json:/network-monitor.py/config.json ./network-monitoring.py vulnerability-scan all --email
+      */10 * * * * docker run --net=host --volume /path/to/config.json:/network-monitor.py/config.json./network-monitoring.py network-scan all --email
       ```
     * **Docker-Compose** (preferred) execute `crontab -e` on the host and add the following line there <br>
       ```
@@ -47,6 +48,7 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
       0    3 * * * /path/to/network-monitoring.py/network-monitoring.py vulnerability-scan all --email
       */10 * * * * /path/to/network-monitoring.py/network-monitoring.py network-scan all --email
       ```
+> The option `net=host` is necessary because the ARP packets are not forwarded by the docker bridge network.
 
 > Please make sure to whitelist your monitoring server on your monitored devices if you are using `fail2ban`.
 
