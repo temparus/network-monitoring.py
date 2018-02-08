@@ -15,12 +15,16 @@ def host_scan(hosts):
 
   for host in hosts:
     if 'vulnerability' in host.get('exclude', []):
+      if args.verbose:
+        print('Skipping host ' + host.get('hostname', host.get('ip', 'unknown')))
       continue
 
     counter = 0
     output = None
     while (counter < 3 and output is None):
       try:
+        if args.verbose:
+          print('Scanning host ' + host.get('hostname', host.get('ip', 'unknown')) + '(' + counter + ' try)')
         output = subprocess.check_output('nmap --script vuln ' + host.get('hostname', host.get('ip', '')), shell=True).decode()
       except:
         counter += 1

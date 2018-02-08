@@ -75,7 +75,7 @@ elif args.action == 'vulnerability-scan':
   if args.param == 'all':
     hosts = []
     for network in data:
-	  if 'vulnerability' in network.get('notifications', []):
+      if 'vulnerability' in network.get('notifications', []):
         hosts += network.get('hosts', [])
     if args.verbose: 
       print('Scanning all known hosts (' + str(len(hosts)) + ' hosts)\n\n')
