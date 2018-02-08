@@ -29,7 +29,7 @@ def network_scan(networks):
     output = None
     while (counter < 3 and output is None):
       try:
-        if type(ipaddress.ip_network(network['subnet']) is IPv6Network):
+        if type(ipaddress.ip_network(network['subnet'])) is ipaddress.IPv6Network:
           options = '-6sP'
         else:
           options = '-sP'
