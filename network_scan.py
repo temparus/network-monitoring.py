@@ -7,6 +7,7 @@
 import os
 import sys
 import socket
+import ipaddress
 import subprocess
 from utils import *
 
@@ -28,7 +29,12 @@ def network_scan(networks):
     output = None
     while (counter < 3 and output is None):
       try:
-        output = subprocess.check_output(['nmap', '-sP', network['subnet']])
+        if type(ipaddress.ip_network(network['subnet']) is IPv6Network):
+          options = '-6sP'
+        else:
+          options = '-sP'
+
+        output = subprocess.check_output(['nmap', options, network['subnet']])
       except:
         counter += 1
         output = None
