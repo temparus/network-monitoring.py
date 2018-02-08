@@ -33,7 +33,11 @@ if not hasNmap():
   exit(3)
 
 # Read configuration file
-data = json.load(args.config)
+if (type(args.config) is list):
+  data = json.load(args.config[-1])
+else:
+  data = json.load(args.config)
+
 for network in data:
   for host in network.get('hosts', []):
     hostExcludeSet = set(host.get('exclude', []))
