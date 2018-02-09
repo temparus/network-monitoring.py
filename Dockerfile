@@ -2,7 +2,7 @@ FROM alpine:3.5
 
 MAINTAINER Sandro Lutz code@temparus.ch
 
-RUN apk add --no-cache nmap python3
+RUN apk add --no-cache python3 nmap nmap-nselibs nmap-scripts
 
 ADD . /network-monitoring.py/
 
