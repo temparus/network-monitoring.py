@@ -22,7 +22,7 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
       ```
       network-monitoring-py:
         image: temparus/network-monitoring-py:latest
-	net: host
+        net: host
         volumes:
           - /path/to/config.json:/network-monitor.py/config.json
       ```
