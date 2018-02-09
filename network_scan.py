@@ -138,7 +138,7 @@ def network_scan(networks):
         messages[network.get('email', 'none')]['subject'] = 'Alert: Network scan for ' + network.get('name', '')
       elif len(network.get('name', '')) > 0:
         messages[network.get('email', 'none')]['subject'] += ', ' + network.get('name', '')
-      messages[network.get('email', 'none')]['message'] = message
+      messages[network.get('email', 'none')]['message'] += message
     messages['none'] += message
 
   return messages
