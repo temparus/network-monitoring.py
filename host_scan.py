@@ -24,7 +24,7 @@ def host_scan(hosts, verbose):
     while (counter < 3 and output is None):
       try:
         if verbose:
-          print('Scanning host ' + host.get('hostname', host.get('ip', 'unknown')) + '(' + counter + ' try)')
+          print('Scanning host ' + host.get('hostname', host.get('ip', 'unknown')) + '(attempt ' + str(counter+1) + ')')
         output = subprocess.check_output('nmap --script vuln ' + host.get('hostname', host.get('ip', '')), shell=True).decode()
       except:
         counter += 1
