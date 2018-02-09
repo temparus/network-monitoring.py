@@ -20,14 +20,22 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
       ```
     * **Docker-Compose** <br>
       ```
+      version: "3"
+      services:
+        network-monitoring-py:
+          image: temparus/network-monitoring-py:latest
+          network_mode: "host"
+          volumes:
+            - /path/to/config.json:/network-monitor.py/config.json
+      ```
+      or
+      ```
+      # Version 1
       network-monitoring-py:
         image: temparus/network-monitoring-py:latest
         net: host
         volumes:
           - /path/to/config.json:/network-monitor.py/config.json
-      ```
-      ```
-      docker-compose run network-monitoring-py -i
       ```
     * **Standalone** <br>
 	  Just call the file `network-monitoring.py`. <br>
@@ -35,13 +43,13 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
 3. Cron configuration (Adapt the following lines to your requirements)
     * **Docker** execute `crontab -e` on the host and add the following line there <br>
       ```
-      0    3 * * * docker run --net=host --volume /path/to/config.json:/network-monitor.py/config.json ./network-monitoring.py vulnerability-scan all --email
-      */10 * * * * docker run --net=host --volume /path/to/config.json:/network-monitor.py/config.json./network-monitoring.py network-scan all --email
+      0    3 * * * docker run --net=host --volume /path/to/config.json:/network-monitor.py/config.json vulnerability-scan all --email
+      */10 * * * * docker run --net=host --volume /path/to/config.json:/network-monitor.py/config.json network-scan all --email
       ```
     * **Docker-Compose** (preferred) execute `crontab -e` on the host and add the following line there <br>
       ```
-      0    3 * * * docker-compose run network-monitoring-py ./network-monitoring.py vulnerability-scan all --email
-      */10 * * * * docker-compose run network-monitoring-py ./network-monitoring.py network-scan all --email
+      0    3 * * * docker-compose run network-monitoring-py vulnerability-scan all --email
+      */10 * * * * docker-compose run network-monitoring-py network-scan all --email
       ```
     * **Standalone** execute `crontab -e` and add the following line there<br>
       ```
