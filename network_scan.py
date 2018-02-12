@@ -11,7 +11,7 @@ import ipaddress
 import subprocess
 from utils import *
 
-def network_scan(networks):
+def network_scan(networks, verbose):
   if type(networks) is not list: networks = [ networks ]
 
   messages = {'none': ''}
@@ -29,10 +29,12 @@ def network_scan(networks):
     output = None
     while (counter < 3 and output is None):
       try:
+        if verbose:
+          print('Scanning network ' + network['subnet'] + '(attempt ' + str(counter+1) + ')')
         if type(ipaddress.ip_network(network['subnet'])) is ipaddress.IPv6Network:
           options = '-6sP'
         else:
-          options = '-sP'
+          options = '-sP'        
         proc = subprocess.Popen(['nmap', options, network['subnet']], stdout=subprocess.PIPE)
         output = proc.communicate()[0].decode()
       except KeyboardInterrupt:
