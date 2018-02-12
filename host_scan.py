@@ -25,7 +25,11 @@ def host_scan(hosts, verbose):
       try:
         if verbose:
           print('Scanning host ' + host.get('hostname', host.get('ip', 'unknown')) + '(attempt ' + str(counter+1) + ')')
-        output = subprocess.check_output('nmap --script vuln ' + host.get('hostname', host.get('ip', '')), shell=True).decode()
+        proc = subprocess.Popen('nmap --script vuln ' + host.get('hostname', host.get('ip', '')), shell=True, stdout=subprocess.PIPE)
+        output = proc.communicate()[0].decode()
+      except KeyboardInterrupt:
+        proc.kill()
+        return {'none': 'KeyboardInterrupt received! Vulnerability scan stopped.\n'}
       except:
         counter += 1
         output = None

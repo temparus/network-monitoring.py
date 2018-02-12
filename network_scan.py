@@ -33,14 +33,17 @@ def network_scan(networks):
           options = '-6sP'
         else:
           options = '-sP'
-
-        output = subprocess.check_output(['nmap', options, network['subnet']])
+        proc = subprocess.Popen(['nmap', options, network['subnet']], stdout=subprocess.PIPE)
+        output = proc.communicate()[0].decode()
+      except KeyboardInterrupt:
+        proc.kill()
+        return {'none': 'KeyboardInterrupt received! Network scan stopped.\n'}
       except:
         counter += 1
         output = None
 
     if (output is not None):
-      outputNmap = output.decode().split('\n')
+      outputNmap = output.split('\n')
 
       hostProblems = list()
       current_host = None
