@@ -1,25 +1,29 @@
-Network Monitoring Tool
-=======================
+# Network Monitoring Tool
 
 This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC address) and vulnerabilities.
 
 ## Requirements
+
+* python 3.x
 * nmap version 7.00 or higher
 * sendmail *(optional, needed only for email notifications)*
 * cron *(optional, needed only for regular checks)*
 
+*Please note that all requirements are met automatically when using the docker container.*
+
 ## Setup
+
 1. Get source files
-    * **Docker** Use the official image (https://hub.docker.com/r/temparus/network-monitoring-py/)
+    * **Docker** Use the official image (<https://hub.docker.com/r/temparus/network-monitoring-py/>)
     * **Standalone** Just clone this repository to a directory on your machine.
-2. Run network-monitoring.py once with Docker <br>
-    * **Docker** <br>
-      ```
+2. Run network-monitoring.py once
+    * **Docker**
+      ```bash
       docker run --net=host --volume /path/to/config.json:/network-monitor.py/config.json -ti \
       temparus/network-monitoring-py:latest
       ```
-    * **Docker-Compose** <br>
-      ```
+    * **Docker-Compose**
+      ```yaml
       version: "3"
       services:
         network-monitoring-py:
@@ -28,31 +32,32 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
           volumes:
             - /path/to/config.json:/network-monitor.py/config.json
       ```
-      or
+    * **Standalone**
+      ```bash
+      python3 /path/to/network-monitoring.py/network-monitoring.py --config /path/to/config.json
       ```
-      # Version 1
-      network-monitoring-py:
-        image: temparus/network-monitoring-py:latest
-        net: host
-        volumes:
-          - /path/to/config.json:/network-monitor.py/config.json
+3. Run network-monitoring.py wiht `cron`
+    * **Docker-Compose** Create a valid crontab and set the environment variable `MONITORING_DAEMON = 1`.
+
+      Crontab example:
+      ```cron
+      0    3 * * * /network-monitoring.py/docker-run.sh vulnerability-scan all --email
+      */10 * * * * /network-monitoring.py/docker-run.sh network-scan all --email
       ```
-    * **Standalone** <br>
-	  Just call the file `network-monitoring.py`. <br>
-      You might specify another configuration file with `--config /path/to/config.json`.
-3. Cron configuration (Adapt the following lines to your requirements)
-    * **Docker** execute `crontab -e` on the host and add the following line there <br>
+      ```yaml
+      version: "3"
+      services:
+        network-monitoring-py:
+          image: temparus/network-monitoring-py:latest
+          network_mode: "host"
+          environment:
+            - MONITORING_DAEMON=1
+          volumes:
+            - /path/to/config.json:/network-monitor.py/config.json
+            - /path/to/crontab:/etc/crontabs/root
       ```
-      0    3 * * * docker run --net=host --volume /path/to/config.json:/network-monitor.py/config.json vulnerability-scan all --email
-      */10 * * * * docker run --net=host --volume /path/to/config.json:/network-monitor.py/config.json network-scan all --email
-      ```
-    * **Docker-Compose** (preferred) execute `crontab -e` on the host and add the following line there <br>
-      ```
-      0    3 * * * docker-compose run network-monitoring-py vulnerability-scan all --email
-      */10 * * * * docker-compose run network-monitoring-py network-scan all --email
-      ```
-    * **Standalone** execute `crontab -e` and add the following line there<br>
-      ```
+    * **Standalone** execute `crontab -e` and add the following lines there *(adapt to your requirements)*
+      ```cron
       0    3 * * * /path/to/network-monitoring.py/network-monitoring.py vulnerability-scan all --email
       */10 * * * * /path/to/network-monitoring.py/network-monitoring.py network-scan all --email
       ```
@@ -64,7 +69,7 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
 
 The default configuration file is `./config.json`. It needs to have the following structure:
 
-```
+```json
 {
     "name": "net_name",
     "description": "Network Name",
@@ -76,20 +81,22 @@ The default configuration file is `./config.json`. It needs to have the followin
       {
         "hostname": "hostname",
         "ip": "ip address (must be within the declared subnet above!)",
-        "mac": "device MAC address"
+        "mac": "device MAC address",
         "exclude": ["vulnerability", "mac", "hostname"]
       }
     ]
 }
 ```
 
-#### Explanation of keys:
+### Explanation of keys
+
 * `name`: needed to specify this network as action parameter
 * `monitoring`: can be `all` (scan complete subnet for unkown devices) or `list-only` (only scan specified hosts).
 * `exclude`: must be an array containing at most `vulnerability` (skip vulnerability scan for this host) and `mac` (do not check if MAC address matches).
 
 ## Usage
-```
+
+```bash
 usage: network-monitoring.py [-h] [--email] [--verbose] [--config config.json]
                              [--version]
                              {network-scan,vulnerability-scan} param
@@ -114,6 +121,7 @@ optional arguments:
 ```
 
 ## License
+
 Copyright (C) 2018 Sandro Lutz \<code@temparus.ch\>
 
 This program is free software: you can redistribute it and/or modify
