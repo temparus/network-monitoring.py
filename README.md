@@ -54,7 +54,7 @@ This tool monitors whole subnets (IP-Address ranges) for hardware changes (MAC a
             - MONITORING_DAEMON=1
           volumes:
             - /path/to/config.json:/network-monitor.py/config.json
-            - /path/to/crontab:/etc/crontabs/root
+            - /path/to/crontab.txt:/crontab.txt
       ```
     * **Standalone** execute `crontab -e` and add the following lines there *(adapt to your requirements)*
       ```cron
