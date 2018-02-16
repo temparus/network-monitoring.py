@@ -8,9 +8,9 @@
 import argparse
 import ipaddress
 import json
-from utils import *
-from network_scan import *
-from host_scan import *
+from utils import hasNmap, sendEmail
+from network_scan import network_scan
+from host_scan import host_scan
 
 ACTIONS = ['network-scan', 'vulnerability-scan']
 
@@ -55,20 +55,20 @@ if args.action == 'network-scan':
   if args.param == 'all':
     if args.verbose:
       print('Scanning all known networks (' + str(len(data)) + ' networks)\n')
-    result = network_scan(data)
+    result = network_scan(data, args.verbose)
   else:
     try:
       ip_net = ipaddress.ip_network(args.param)
       if args.verbose:
         print('Scanning network ' + str(ip_net) +'\n')
-      result = network_scan({'subnet': str(ip_net), 'monitoring': 'all'})
+      result = network_scan({'subnet': str(ip_net), 'monitoring': 'all'}, args.verbose)
     except ValueError:
       # Not a valid subnet -> maybe a network name?
       for network in data:
         if network.get('name', '') == args.param:
           if args.verbose:
             print('Scanning network "' + args.param +'"\n')
-          result = network_scan(network)
+          result = network_scan(network, args.verbose)
       if result is None:
         parser.error('network param "' + args.param + '" is invalid.')
 elif args.action == 'vulnerability-scan':
@@ -94,9 +94,9 @@ elif args.action == 'vulnerability-scan':
             if args.verbose: 
               print('Scanning known host ' + args.param + '\n')
             result = host_scan(host, args.verbose)
-            break;
+            break
         if result is not None:
-          break;
+          break
       if result is None:
         # No host configuration found.
         # Just try to scan as it may be a hostname
