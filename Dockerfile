@@ -8,6 +8,6 @@ ADD . /network-monitoring.py/
 
 WORKDIR /network-monitoring.py
 
-RUN chmod 755 docker.sh network-monitoring.py
+RUN chmod 755 docker-entrypoint.sh docker-run.sh network-monitoring.py
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
